@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mc.S.P | The comfortable life begins in here</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@200;300;400;500;700;900&family=Inter:wght@200;300;400;500;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --black: #1a1612;
+    --white: #fdf2d0;
+    --gray-50: #f5e8c0;
+    --gray-100: #ead9ae;
+    --gray-300: #b8a887;
+    --gray-500: #7a6f58;
+    --gray-700: #3a342a;
+    --accent: #1a1612;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  
+  html { scroll-behavior: smooth; }
+  
+  body {
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    background: var(--white);
+    color: var(--black);
+    overflow-x: hidden;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    line-height: 1.7;
+  }
+  
+  /* ===== CURSOR ===== */
+  .cursor {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--black);
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease-out, width 0.3s, height 0.3s, background 0.3s;
+    mix-blend-mode: difference;
+    display: none;
+  }
+  
+  .cursor.hovering {
+    width: 40px;
+    height: 40px;
+    background: var(--white);
+  }
+  
+  @media (hover: hover) and (pointer: fine) {
+    .cursor { display: block; }
+  }
+  
+  /* ===== LOADER ===== */
+  .loader {
+    position: fixed;
+    inset: 0;
+    background: var(--white);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease-out, visibility 0.8s;
+  }
+  
+  .loader.done {
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .loader-logo {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 48px;
+    letter-spacing: -0.03em;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .loader-logo::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background: var(--black);
+    animation: loaderBar 1.5s ease-out forwards;
+  }
+  
+  @keyframes loaderBar {
+    to { width: 100%; }
+  }
+  
+  /* ===== NAV ===== */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    mix-blend-mode: difference;
+    color: white;
+    transform: translateY(-100%);
+    animation: navDrop 1s var(--ease-out) 1.5s forwards;
+  }
+  
+  @keyframes navDrop {
+    to { transform: translateY(0); }
+  }
+  
+  .nav-logo {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+  
+  .nav-links a {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.3s;
+    position: relative;
+  }
+  
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: currentColor;
+    transition: width 0.4s var(--ease-out);
+  }
+  
+  .nav-links a:hover::after { width: 100%; }
+  
+  /* ===== HERO ===== */
+  .hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background: var(--white);
+    overflow: hidden;
+  }
+  
+  .hero-bg-text {
+    position: absolute;
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 28vw;
+    color: #f5e4b0;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+    z-index: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    opacity: 0;
+    animation: bgTextFade 2s ease-out 1.8s forwards;
+  }
+  
+  @keyframes bgTextFade {
+    to { opacity: 1; }
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+  
+  .reborn-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 20px;
+    border: 1px solid var(--black);
+    border-radius: 100px;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: tagEnter 0.8s var(--ease-out) 1.8s forwards,
+               pulseScale 3s ease-in-out 3s infinite;
+  }
+  
+  @keyframes tagEnter {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes pulseScale {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+  }
+  
+  .reborn-tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--black);
+    animation: blink 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  
+  /* Hero logo - letter by letter reveal */
+  .hero-logo {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: clamp(80px, 14vw, 220px);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .hero-logo .letter {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(100%);
+    animation: letterUp 1s var(--ease-out) forwards;
+  }
+  
+  @keyframes letterUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .hero-logo .letter:nth-child(1) { animation-delay: 2.0s; }
+  .hero-logo .letter:nth-child(2) { animation-delay: 2.1s; }
+  .hero-logo .letter:nth-child(3) { animation-delay: 2.2s; }
+  .hero-logo .letter:nth-child(4) { animation-delay: 2.3s; }
+  .hero-logo .letter:nth-child(5) { animation-delay: 2.4s; }
+  .hero-logo .letter:nth-child(6) { animation-delay: 2.5s; }
+  
+  .hero-logo-jp {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.5em;
+    font-weight: 300;
+    margin-bottom: 60px;
+    color: var(--gray-500);
+    opacity: 0;
+    animation: tagEnter 1s var(--ease-out) 2.8s forwards;
+  }
+  
+  .hero-tagline {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(18px, 2.5vw, 28px);
+    font-weight: 400;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: tagEnter 1s var(--ease-out) 3.1s forwards;
+  }
+  
+  .hero-sub {
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    opacity: 0;
+    animation: tagEnter 1s var(--ease-out) 3.4s forwards;
+  }
+  
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: tagEnter 1s var(--ease-out) 3.8s forwards;
+  }
+  
+  .hero-scroll-line {
+    width: 1px;
+    height: 40px;
+    background: var(--gray-500);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+  
+  @keyframes scrollLine {
+    0%, 100% { transform: scaleY(0.3); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+  }
+  
+  /* ===== MARQUEE ===== */
+  .marquee {
+    background: var(--black);
+    color: var(--white);
+    padding: 20px 0;
+    overflow: hidden;
+    position: relative;
+    border-top: 1px solid var(--gray-700);
+    border-bottom: 1px solid var(--gray-700);
+  }
+  
+  .marquee-track {
+    display: flex;
+    gap: 60px;
+    white-space: nowrap;
+    animation: marqueeScroll 40s linear infinite;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+  
+  .marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 60px;
+  }
+  
+  .marquee-item::after {
+    content: '✦';
+    font-size: 12px;
+    color: var(--gray-500);
+  }
+  
+  @keyframes marqueeScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  
+  /* ===== SECTION COMMON ===== */
+  section { position: relative; }
+  
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    margin-bottom: 24px;
+    display: inline-block;
+    position: relative;
+    padding-left: 0;
+  }
+  
+  .section-label::before {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 1px;
+    background: var(--gray-500);
+    vertical-align: middle;
+    margin-right: 12px;
+    transition: width 1s var(--ease-out) 0.2s;
+  }
+  
+  .visible .section-label::before {
+    width: 30px;
+  }
+  
+  /* ===== REBORN SECTION ===== */
+  .reborn {
+    padding: 160px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .reborn-headline {
+    font-family: 'Inter', sans-serif;
+    font-weight: 200;
+    font-size: clamp(48px, 8vw, 140px);
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    margin-bottom: 80px;
+  }
+  
+  .reborn-headline em {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 400;
+  }
+  
+  .reborn-compare {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 60px;
+    align-items: center;
+    margin: 80px 0;
+    padding: 60px 0;
+    border-top: 1px solid var(--gray-100);
+    border-bottom: 1px solid var(--gray-100);
+  }
+  
+  .reborn-col {
+    text-align: center;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1.2s var(--ease-out), transform 1.2s var(--ease-out);
+  }
+  
+  .visible .reborn-col.before {
+    opacity: 0.45;
+    transform: translateY(0);
+  }
+  
+  .visible .reborn-col.after {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.8s;
+  }
+  
+  .visible .reborn-col.after .reborn-col-brand {
+    animation: afterPop 0.8s var(--ease-out) 1.4s backwards;
+  }
+  
+  @keyframes afterPop {
+    0% { transform: scale(0.9); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+  }
+  
+  .reborn-col-label {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    margin-bottom: 20px;
+  }
+  
+  .reborn-col-brand {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 48px);
+    letter-spacing: 0.02em;
+    margin-bottom: 16px;
+    text-decoration: line-through;
+    text-decoration-color: var(--gray-500);
+    display: inline-block;
+  }
+  
+  .reborn-col.after .reborn-col-brand {
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+  
+  .reborn-col-desc {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    color: var(--gray-500);
+    line-height: 1.8;
+  }
+  
+  .reborn-arrow {
+    opacity: 0;
+    transition: opacity 0.6s 0.4s;
+  }
+  
+  .visible .reborn-arrow { opacity: 1; }
+  
+  .reborn-arrow svg {
+    width: 80px;
+    height: 40px;
+  }
+  
+  .reborn-arrow-path {
+    stroke: var(--gray-500);
+    stroke-width: 1.2;
+    fill: none;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    transition: stroke-dashoffset 1s var(--ease-out) 0.6s;
+  }
+  
+  .visible .reborn-arrow-path { stroke-dashoffset: 0; }
+  
+  .reborn-message {
+    max-width: 780px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .reborn-message-lead {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: clamp(20px, 2.4vw, 32px);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 32px;
+    letter-spacing: 0.02em;
+  }
+  
+  .reborn-message-body {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 15px;
+    line-height: 2.1;
+    color: var(--gray-700);
+  }
+  
+  /* ===== BRAND STORY ===== */
+  .brand-story {
+    padding: 160px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+    background: var(--white);
+  }
+  
+  .brand-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 120px;
+    align-items: start;
+  }
+  
+  .brand-headline {
+    font-family: 'Inter', sans-serif;
+    font-weight: 200;
+    font-size: clamp(36px, 5vw, 72px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 40px;
+  }
+  
+  .brand-headline em {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 400;
+  }
+  
+  .brand-jp-headline {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: clamp(22px, 2.2vw, 32px);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+    margin-bottom: 32px;
+  }
+  
+  .brand-text {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 15px;
+    line-height: 2;
+    color: var(--gray-700);
+    margin-bottom: 24px;
+  }
+  
+  .target-list {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--gray-100);
+  }
+  
+  .target-list-label {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    margin-bottom: 24px;
+  }
+  
+  .target-item {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 15px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+  }
+  
+  .target-item:nth-child(2) { transition-delay: 0.1s; }
+  .target-item:nth-child(3) { transition-delay: 0.2s; }
+  .target-item:nth-child(4) { transition-delay: 0.3s; }
+  .target-item:nth-child(5) { transition-delay: 0.4s; }
+  
+  .visible .target-item {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .target-item-num {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--gray-500);
+    letter-spacing: 0.1em;
+    min-width: 30px;
+  }
+  
+  /* ===== CONCEPT ===== */
+  .concept {
+    background: var(--black);
+    color: var(--white);
+    padding: 160px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .concept-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .concept .section-label { color: var(--gray-500); }
+  .concept .section-label::before { background: var(--gray-500); }
+  
+  .concept-year {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: clamp(80px, 12vw, 180px);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 40px;
+    overflow: hidden;
+  }
+  
+  .concept-year-inner {
+    display: inline-block;
+    transform: translateY(100%);
+    transition: transform 1.2s var(--ease-out);
+  }
+  
+  .visible .concept-year-inner { transform: translateY(0); }
+  
+  .concept-theme {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-bottom: 80px;
+  }
+  
+  .concept-theme-item {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: clamp(28px, 4vw, 56px);
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 1s var(--ease-out) 0.3s, transform 1s var(--ease-out) 0.3s;
+  }
+  
+  .concept-theme-item:last-child {
+    transform: translateX(30px);
+    transition-delay: 0.6s;
+  }
+  
+  .visible .concept-theme-item {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .concept-theme-item em {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--gray-300);
+  }
+  
+  .concept-x {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(40px, 6vw, 80px);
+    color: var(--gray-500);
+    font-weight: 300;
+    opacity: 0;
+    transform: scale(0.5) rotate(-90deg);
+    transition: opacity 0.8s var(--ease-out) 0.5s, transform 0.8s var(--ease-out) 0.5s;
+  }
+  
+  .visible .concept-x {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+  
+  .concept-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    padding-top: 60px;
+    border-top: 1px solid var(--gray-700);
+  }
+  
+  .concept-copy {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 15px;
+    line-height: 2;
+    color: var(--gray-300);
+  }
+  
+  .concept-manifest {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: clamp(20px, 2.2vw, 28px);
+    font-weight: 300;
+    line-height: 1.7;
+  }
+  
+  .concept-manifest strong {
+    font-weight: 500;
+    position: relative;
+  }
+  
+  .concept-manifest strong::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--white);
+    transition: width 1.2s var(--ease-out) 1s;
+  }
+  
+  .visible .concept-manifest strong::after { width: 100%; }
+  
+  /* ===== FABRIC TECH ===== */
+  .fabric {
+    padding: 160px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  .fabric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 100px;
+    flex-wrap: wrap;
+    gap: 40px;
+  }
+  
+  .fabric-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 200;
+    font-size: clamp(40px, 6vw, 96px);
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+  }
+  
+  .fabric-title em {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 400;
+  }
+  
+  .fabric-intro {
+    max-width: 400px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    line-height: 2;
+    color: var(--gray-700);
+  }
+  
+  .fabric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--gray-100);
+    border: 1px solid var(--gray-100);
+  }
+  
+  .fabric-item {
+    background: var(--white);
+    padding: 60px 40px;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: background 0.5s, color 0.5s, opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+    cursor: default;
+    opacity: 0;
+    transform: translateY(40px);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .fabric-item.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .fabric-item:hover {
+    background: var(--black);
+    color: #fdf2d0;
+  }
+  
+  .fabric-item:hover .fabric-num { color: var(--gray-500); }
+  .fabric-item:hover .fabric-desc { color: var(--gray-300); }
+  .fabric-item:hover .fabric-icon path,
+  .fabric-item:hover .fabric-icon circle,
+  .fabric-item:hover .fabric-icon line {
+    stroke: var(--white);
+  }
+  
+  .fabric-item:hover .fabric-icon {
+    transform: rotate(360deg) scale(1.1);
+  }
+  
+  .fabric-num {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--gray-500);
+    transition: color 0.5s;
+  }
+  
+  .fabric-icon {
+    width: 56px;
+    height: 56px;
+    margin: 20px 0;
+    transition: transform 1s var(--ease-out);
+  }
+  
+  .fabric-icon path,
+  .fabric-icon circle,
+  .fabric-icon line {
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.2;
+    transition: stroke 0.5s;
+  }
+  
+  .fabric-name {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+  }
+  
+  .fabric-name-en {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: block;
+  }
+  
+  .fabric-desc {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--gray-700);
+    transition: color 0.5s;
+  }
+  
+  /* ===== VALUE PROPOSITION ===== */
+  .value {
+    padding: 160px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .value-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 100px;
+    align-items: center;
+  }
+  
+  .value-headline {
+    font-family: 'Inter', sans-serif;
+    font-weight: 200;
+    font-size: clamp(44px, 6.5vw, 100px);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 32px;
+  }
+  
+  .value-headline em {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 400;
+  }
+  
+  .value-jp {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: clamp(22px, 2.4vw, 34px);
+    font-weight: 300;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    letter-spacing: 0.03em;
+  }
+  
+  .value-jp strong {
+    font-weight: 500;
+    position: relative;
+  }
+  
+  .value-jp strong::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--black);
+    transition: width 1s var(--ease-out) 0.5s;
+  }
+  
+  .visible .value-jp strong::after { width: 100%; }
+  
+  .value-text {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 15px;
+    line-height: 2.1;
+    color: var(--gray-700);
+  }
+  
+  .value-matrix {
+    position: relative;
+    aspect-ratio: 1;
+    padding: 40px;
+  }
+  
+  .value-matrix-svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* SVG matrix animations */
+  .matrix-axis {
+    stroke-dasharray: 300;
+    stroke-dashoffset: 300;
+    transition: stroke-dashoffset 1.2s var(--ease-out);
+  }
+  
+  .visible .matrix-axis { stroke-dashoffset: 0; }
+  
+  .matrix-arrow {
+    opacity: 0;
+    transition: opacity 0.4s 1.2s;
+  }
+  
+  .visible .matrix-arrow { opacity: 1; }
+  
+  .matrix-competitor {
+    opacity: 0;
+    transform-origin: center;
+    transform-box: fill-box;
+    transform: scale(0);
+    transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+  }
+  
+  .visible .matrix-competitor {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .visible .matrix-competitor.c1 { transition-delay: 1.4s; }
+  .visible .matrix-competitor.c2 { transition-delay: 1.6s; }
+  .visible .matrix-competitor.c3 { transition-delay: 1.8s; }
+  
+  .matrix-text {
+    opacity: 0;
+    transition: opacity 0.6s;
+  }
+  
+  .visible .matrix-text { opacity: 1; }
+  .visible .matrix-text.t1 { transition-delay: 1.5s; }
+  .visible .matrix-text.t2 { transition-delay: 1.7s; }
+  .visible .matrix-text.t3 { transition-delay: 1.9s; }
+  .visible .matrix-text.t4 { transition-delay: 2.6s; }
+  
+  .matrix-mcsp {
+    opacity: 0;
+    transform-origin: center;
+    transform-box: fill-box;
+    transform: scale(0);
+    transition: opacity 0.8s var(--ease-out) 2.2s, transform 0.8s var(--ease-out) 2.2s;
+  }
+  
+  .visible .matrix-mcsp {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .matrix-mcsp-ring {
+    fill: none;
+    stroke: var(--black);
+    stroke-width: 1;
+    opacity: 0.3;
+    transform-origin: 180px 110px;
+    animation: ringPulse 2.5s ease-out 3s infinite;
+  }
+  
+  @keyframes ringPulse {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+  
+  .matrix-connector {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    transition: stroke-dashoffset 1s var(--ease-out) 2s;
+  }
+  
+  .visible .matrix-connector { stroke-dashoffset: 0; }
+  
+  /* ===== COLLECTION ===== */
+  .collection {
+    padding: 160px 0 100px;
+    background: #f5e8c0;
+  }
+  
+  .collection-header {
+    max-width: 1400px;
+    margin: 0 auto 100px;
+    padding: 0 48px;
+  }
+  
+  .collection-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 200;
+    font-size: clamp(48px, 8vw, 120px);
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+  }
+  
+  .collection-title em {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 400;
+  }
+  
+  .collection-sub {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 16px;
+    color: var(--gray-700);
+    margin-top: 24px;
+    max-width: 600px;
+    line-height: 2;
+  }
+  
+  .collection-grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 40px 30px;
+  }
+  
+  .product {
+    cursor: pointer;
+    transition: transform 0.6s var(--ease-out), opacity 0.9s var(--ease-out);
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  
+  .product.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .product:hover { transform: translateY(-12px); }
+  
+  .product-img {
+    background: #fff8e0;
+    aspect-ratio: 3/4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .product-img::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(26,22,18,0.04) 100%);
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  .product-img img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    transition: transform 0.8s var(--ease-out);
+    z-index: 2;
+    position: relative;
+  }
+  
+  .product:hover .product-img img {
+    transform: scale(1.05);
+  }
+  
+  .product-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: var(--black);
+    color: var(--white);
+    padding: 6px 12px;
+    z-index: 3;
+  }
+  
+  .product-no {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gray-500);
+    margin-bottom: 8px;
+  }
+  
+  .product-name {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+  
+  .product-features {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    color: var(--gray-500);
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+  }
+  
+  .product-price {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  
+  .product-price span {
+    font-size: 10px;
+    color: var(--gray-500);
+    margin-left: 4px;
+  }
+  
+  .product-1 { grid-column: span 4; }
+  .product-2 { grid-column: span 5; margin-top: 60px; }
+  .product-3 { grid-column: span 3; }
+  .product-4 { grid-column: span 4; }
+  .product-5 { grid-column: span 4; margin-top: 40px; }
+  
+  /* ===== PHILOSOPHY ===== */
+  .philosophy {
+    padding: 200px 48px;
+    text-align: center;
+    background: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .philosophy-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .philosophy-text {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: clamp(24px, 3.5vw, 52px);
+    font-weight: 200;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+  }
+  
+  .philosophy-text em {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 400;
+  }
+  
+  .philosophy-text .highlight {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .philosophy-text .highlight::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--black);
+    transition: width 1.5s var(--ease-out) 0.5s;
+  }
+  
+  .visible .philosophy-text .highlight::after { width: 100%; }
+  
+  /* Giant bg letters */
+  .philosophy-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 40vw;
+    color: #f5e4b0;
+    z-index: 1;
+    opacity: 0.5;
+    letter-spacing: -0.05em;
+    pointer-events: none;
+    white-space: nowrap;
+    animation: philoBgFloat 20s ease-in-out infinite;
+  }
+  
+  @keyframes philoBgFloat {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -52%) scale(1.05); }
+  }
+  
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--black);
+    color: var(--white);
+    padding: 100px 48px 40px;
+  }
+  
+  .footer-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    padding-bottom: 80px;
+    border-bottom: 1px solid var(--gray-700);
+  }
+  
+  .footer-logo {
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 48px;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+  
+  .footer-tagline {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--gray-300);
+    margin-bottom: 32px;
+  }
+  
+  .footer-info {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--gray-300);
+  }
+  
+  .footer-col h4 {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    font-weight: 400;
+  }
+  
+  .footer-col ul { list-style: none; }
+  
+  .footer-col li {
+    margin-bottom: 12px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    color: var(--gray-300);
+    transition: color 0.3s, transform 0.3s;
+    cursor: pointer;
+  }
+  
+  .footer-col li:hover {
+    color: var(--white);
+    transform: translateX(4px);
+  }
+  
+  .footer-bottom {
+    padding-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gray-500);
+    text-transform: uppercase;
+  }
+  
+  /* ===== FADE-IN (base) ===== */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s var(--ease-out), transform 1s var(--ease-out);
+  }
+  
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Word-by-word reveal */
+  .word-reveal {
+    display: inline-block;
+    overflow: hidden;
+  }
+  
+  .word-reveal > span {
+    display: inline-block;
+    transform: translateY(100%);
+    transition: transform 1s var(--ease-out);
+  }
+  
+  .word-reveal > span:nth-child(2) { transition-delay: 0.1s; }
+  .word-reveal > span:nth-child(3) { transition-delay: 0.2s; }
+  .word-reveal > span:nth-child(4) { transition-delay: 0.3s; }
+  
+  .visible .word-reveal > span,
+  .word-reveal.visible > span {
+    transform: translateY(0);
+  }
+  
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .brand-story, .fabric, .philosophy, .reborn, .value { padding: 100px 24px; }
+    .concept { padding: 100px 24px; }
+    .brand-grid { grid-template-columns: 1fr; gap: 60px; }
+    .concept-body { grid-template-columns: 1fr; gap: 40px; }
+    .fabric-grid { grid-template-columns: 1fr; }
+    .fabric-header { flex-direction: column; align-items: flex-start; }
+    .value-inner { grid-template-columns: 1fr; gap: 60px; }
+    .reborn-compare { grid-template-columns: 1fr; gap: 30px; }
+    .reborn-arrow { transform: rotate(90deg); }
+    .collection-header { padding: 0 24px; }
+    .collection-grid { padding: 0 24px; grid-template-columns: 1fr; gap: 40px; }
+    .product-1, .product-2, .product-3, .product-4, .product-5 {
+      grid-column: span 1;
+      margin-top: 0;
+    }
+    .footer-top { grid-template-columns: 1fr; gap: 40px; }
+    .footer-bottom { flex-direction: column; gap: 12px; }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+
+<!-- LOADER -->
+<div class="loader" id="loader">
+  <div class="loader-logo">Mc.S.P</div>
+</div>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-logo">Mc.S.P</div>
+  <div class="nav-links">
+    <a href="#reborn">Reborn</a>
+    <a href="#brand">Brand</a>
+    <a href="#concept">Concept</a>
+    <a href="#value">Value</a>
+    <a href="#collection">Collection</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-text">Mc.S.P</div>
+  <div class="hero-content">
+    <div class="reborn-tag">
+      <span class="reborn-tag-dot"></span>
+      <span>Reborn&nbsp;&nbsp;2026</span>
+    </div>
+    <div class="hero-logo">
+      <span class="letter">M</span><span class="letter">c</span><span class="letter">.</span><span class="letter">S</span><span class="letter">.</span><span class="letter">P</span>
+    </div>
+    <div class="hero-logo-jp">エムシーエスピー</div>
+    <div class="hero-tagline">The comfortable life begins in here.</div>
+    <div class="hero-sub">MANCHES&nbsp;&nbsp;SPECIAL&nbsp;&nbsp;PROPOSAL</div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track">
+    <div class="marquee-item">REBORN 2026</div>
+    <div class="marquee-item">REAL QUALITY</div>
+    <div class="marquee-item">SMART PRICE</div>
+    <div class="marquee-item">NEW DIRECTION</div>
+    <div class="marquee-item">Mc.S.P</div>
+    <div class="marquee-item">COMFORTABLE LIFE</div>
+    <div class="marquee-item">REBORN 2026</div>
+    <div class="marquee-item">REAL QUALITY</div>
+    <div class="marquee-item">SMART PRICE</div>
+    <div class="marquee-item">NEW DIRECTION</div>
+    <div class="marquee-item">Mc.S.P</div>
+    <div class="marquee-item">COMFORTABLE LIFE</div>
+  </div>
+</div>
+
+<!-- REBORN SECTION -->
+<section class="reborn fade-in" id="reborn">
+  <div>
+    <div class="section-label">Brand Renewal 2026</div>
+    <h2 class="reborn-headline">We are <em>reborn.</em><br>新しいMc.S.Pへ。</h2>
+  </div>
+  
+  <div class="reborn-compare">
+    <div class="reborn-col before">
+      <div class="reborn-col-label">— Until yesterday</div>
+      <div class="reborn-col-brand">Mc.S.P</div>
+      <div class="reborn-col-desc">
+        大きいサイズの<br>
+        「安価な商品」カテゴリ
+      </div>
+    </div>
+    <div class="reborn-arrow">
+      <svg viewBox="0 0 80 40" xmlns="http://www.w3.org/2000/svg">
+        <path class="reborn-arrow-path" d="M5 20 L70 20 M60 10 L70 20 L60 30"/>
+      </svg>
+    </div>
+    <div class="reborn-col after">
+      <div class="reborn-col-label">— From today</div>
+      <div class="reborn-col-brand">Mc.S.P</div>
+      <div class="reborn-col-desc">
+        品質・機能・デザインを極めた<br>
+        <strong>ライフスタイルブランド</strong>
+      </div>
+    </div>
+  </div>
+  
+  <div class="reborn-message">
+    <p class="reborn-message-lead">
+      これまでの Mc.S.P は、もうありません。
+    </p>
+    <p class="reborn-message-body">
+      老舗として培ってきた確かな技術と経験。それを礎に、私たちは"ブランド"そのものを、一から作り直しました。明確な顧客像、統一されたデザイン思想、こだわり抜いた素材選定——そのすべてを再構築し、Mc.S.P は、まったく新しいライフスタイルブランドとして歩み始めます。
+      <br><br>
+      だからこそ、お客様に伝えたいのです。"同じ名前"でも、中身はもう別のブランドだと。これから出会う一着は、あなたの期待を超える確信があります。
+    </p>
+  </div>
+</section>
+
+<!-- BRAND STORY -->
+<section class="brand-story fade-in" id="brand">
+  <div class="brand-grid">
+    <div>
+      <div class="section-label">Brand Vision</div>
+      <h2 class="brand-headline">Designed <em>for</em><br>the ones who know.</h2>
+    </div>
+    <div>
+      <div class="brand-jp-headline">本物を知る大人へ、<br>確かな一着を。</div>
+      <p class="brand-text">
+        Mc.S.P が向き合うのは、サイズの数字ではなく、"その人自身"。品質を見極める目を持ち、日々を上質に過ごしたいと願う、すべての大人たちです。
+      </p>
+      <p class="brand-text">
+        明確なターゲット設定により、ブランド全体に統一感のあるデザインと世界観を実現。どのアイテムを手に取っても、揺るぎない"Mc.S.P らしさ"を感じていただけます。
+      </p>
+      
+      <div class="target-list">
+        <div class="target-list-label">Who we design for</div>
+        <div class="target-item">
+          <span class="target-item-num">01</span>
+          <span>品質を見極める目を持つ、本物志向の大人</span>
+        </div>
+        <div class="target-item">
+          <span class="target-item-num">02</span>
+          <span>機能性もファッション性も、妥協したくない</span>
+        </div>
+        <div class="target-item">
+          <span class="target-item-num">03</span>
+          <span>自分のサイズに合う、上質なベーシックを求めている</span>
+        </div>
+        <div class="target-item">
+          <span class="target-item-num">04</span>
+          <span>価格以上の価値を、賢く手にしたい</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCEPT -->
+<section class="concept fade-in" id="concept">
+  <div class="concept-inner">
+    <div>
+      <div class="section-label">2026 Spring / Summer Concept</div>
+      <div class="concept-year"><span class="concept-year-inner">2026<span style="font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400;">SS</span></span></div>
+    </div>
+    
+    <div class="concept-theme">
+      <div class="concept-theme-item"><em>『</em>猛暑対策<em>』</em></div>
+      <div class="concept-x">×</div>
+      <div class="concept-theme-item"><em>『</em>NEO ベーシック<em>』</em></div>
+    </div>
+    
+    <div class="concept-body">
+      <div class="concept-copy">
+        例年より続く気候変動による気温上昇の影響は、年々深刻化している。アパレル業界にも新たな対応が求められる今、Mc.S.Pは"猛暑"という時代の課題に正面から向き合います。
+        <br><br>
+        機能を備えた素材を贅沢に使いながら、これまでにないシルエットと着心地を実現。大きいサイズマーケットに欠かせない快適性と、時代を捉えたファッション性を両立させた、新しいベーシックを提案します。
+      </div>
+      <div class="concept-manifest">
+        機能素材＝「ダサい」。<br>
+        その常識を、<br>
+        <strong>私たちは更新する。</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FABRIC TECHNOLOGY -->
+<section class="fabric" id="fabric">
+  <div class="fabric-header">
+    <div class="fade-in">
+      <div class="section-label">Fabric Technology</div>
+      <h2 class="fabric-title">Six <em>functions,</em><br>one standard.</h2>
+    </div>
+    <div class="fabric-intro fade-in">
+      猛暑の時代に応えるため選び抜かれた6つの機能素材。さらに大きいサイズマーケットに必須の快適性をプラスし、これからのベーシックを再定義する。
+    </div>
+  </div>
+  
+  <div class="fabric-grid">
+    <div class="fabric-item" data-stagger="0">
+      <div>
+        <div class="fabric-num">— 01</div>
+        <svg class="fabric-icon" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="18"/>
+          <path d="M28 10 L28 18 M28 38 L28 46 M10 28 L18 28 M38 28 L46 28"/>
+          <path d="M28 22 Q32 28 28 34 Q24 28 28 22"/>
+        </svg>
+      </div>
+      <div>
+        <span class="fabric-name-en">Cooling Touch</span>
+        <div class="fabric-name">接触冷感</div>
+        <p class="fabric-desc">キシリトール・メントール配合素材。着用した瞬間のひんやり感と、上質な肌触りを両立。</p>
+      </div>
+    </div>
+    
+    <div class="fabric-item" data-stagger="1">
+      <div>
+        <div class="fabric-num">— 02</div>
+        <svg class="fabric-icon" viewBox="0 0 56 56">
+          <path d="M28 8 Q18 24 18 34 Q18 44 28 44 Q38 44 38 34 Q38 24 28 8 Z"/>
+          <path d="M28 20 L28 36"/>
+        </svg>
+      </div>
+      <div>
+        <span class="fabric-name-en">Quick Dry</span>
+        <div class="fabric-name">吸湿速乾</div>
+        <p class="fabric-desc">COOLMAX®をはじめ、より高い吸湿性と急速な速乾性を実現する最先端素材を採用。</p>
+      </div>
+    </div>
+    
+    <div class="fabric-item" data-stagger="2">
+      <div>
+        <div class="fabric-num">— 03</div>
+        <svg class="fabric-icon" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="8"/>
+          <path d="M28 6 L28 14 M28 42 L28 50 M6 28 L14 28 M42 28 L50 28"/>
+          <path d="M13 13 L18 18 M38 38 L43 43 M43 13 L38 18 M18 38 L13 43"/>
+        </svg>
+      </div>
+      <div>
+        <span class="fabric-name-en">UV Cut & Heat Shield</span>
+        <div class="fabric-name">遮熱・UVカット</div>
+        <p class="fabric-desc">ソーラーカット®・サンブロック®など、複合的な機能で強い日差しから肌を守る。</p>
+      </div>
+    </div>
+    
+    <div class="fabric-item" data-stagger="3">
+      <div>
+        <div class="fabric-num">— 04</div>
+        <svg class="fabric-icon" viewBox="0 0 56 56">
+          <circle cx="16" cy="16" r="2"/><circle cx="28" cy="16" r="2"/><circle cx="40" cy="16" r="2"/>
+          <circle cx="16" cy="28" r="2"/><circle cx="28" cy="28" r="2"/><circle cx="40" cy="28" r="2"/>
+          <circle cx="16" cy="40" r="2"/><circle cx="28" cy="40" r="2"/><circle cx="40" cy="40" r="2"/>
+        </svg>
+      </div>
+      <div>
+        <span class="fabric-name-en">Mesh / Air Through</span>
+        <div class="fabric-name">メッシュ・エアスルー</div>
+        <p class="fabric-desc">ドットエアーをはじめとした通気性重視の構造で、肌の熱を効率的に逃がす。</p>
+      </div>
+    </div>
+    
+    <div class="fabric-item" data-stagger="4">
+      <div>
+        <div class="fabric-num">— 05</div>
+        <svg class="fabric-icon" viewBox="0 0 56 56">
+          <path d="M14 28 Q28 14 42 28 Q28 42 14 28 Z"/>
+          <circle cx="28" cy="28" r="4"/>
+          <path d="M28 12 L28 6 M28 50 L28 44"/>
+        </svg>
+      </div>
+      <div>
+        <span class="fabric-name-en">Thermo Regulation</span>
+        <div class="fabric-name">温度調整</div>
+        <p class="fabric-desc">アウトラスト®採用。環境に応じて温度をコントロールする、次世代のサスティナブル素材。</p>
+      </div>
+    </div>
+    
+    <div class="fabric-item" data-stagger="5">
+      <div>
+        <div class="fabric-num">— 06</div>
+        <svg class="fabric-icon" viewBox="0 0 56 56">
+          <path d="M18 18 L28 28 L18 38"/>
+          <path d="M38 18 L28 28 L38 38"/>
+          <circle cx="28" cy="28" r="20"/>
+        </svg>
+      </div>
+      <div>
+        <span class="fabric-name-en">Stretch & Recovery</span>
+        <div class="fabric-name">4WAYストレッチ</div>
+        <p class="fabric-desc">大きいサイズマーケットに欠かせない、高いストレッチ性とキックバック性。動きを制限しない。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE PROPOSITION -->
+<section class="value fade-in" id="value">
+  <div class="value-inner">
+    <div>
+      <div class="section-label">Our Promise</div>
+      <h2 class="value-headline">Real quality.<br><em>Smart</em> price.</h2>
+      <p class="value-jp">
+        本物の品質を、<br>
+        <strong>手の届く価格</strong>で。
+      </p>
+      <p class="value-text">
+        セレクトショップ水準のデザインと素材、そして毎日を支える確かな機能。私たちは、その"本物"を、日常に寄り添う価格で届けることにこだわりました。
+        <br><br>
+        同等の品質を他で求めれば、その価格は決して手軽ではないはず。Mc.S.P が目指すのは、"価格以上"を超えた新しい価値の提案。高級なものを、賢く選ぶ。そんな大人のための、新しいスタンダードです。
+      </p>
+    </div>
+    
+    <div>
+      <div class="value-matrix">
+        <svg class="value-matrix-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <line class="matrix-axis" x1="60" y1="340" x2="360" y2="340" stroke="#1a1612" stroke-width="1"/>
+          <line class="matrix-axis" x1="60" y1="340" x2="60" y2="40" stroke="#1a1612" stroke-width="1" style="transition-delay:0.3s;"/>
+          <path class="matrix-arrow" d="M360 340 L354 336 M360 340 L354 344" stroke="#1a1612" stroke-width="1" fill="none"/>
+          <path class="matrix-arrow" d="M60 40 L56 46 M60 40 L64 46" stroke="#1a1612" stroke-width="1" fill="none"/>
+          <text class="matrix-text t4" x="370" y="344" font-family="Inter" font-size="10" fill="#1a1612" letter-spacing="2">PRICE</text>
+          <text class="matrix-text t4" x="60" y="30" font-family="Inter" font-size="10" fill="#1a1612" letter-spacing="2">QUALITY</text>
+          
+          <g class="matrix-competitor c1">
+            <circle cx="110" cy="290" r="28" fill="none" stroke="#b8a887" stroke-width="1" stroke-dasharray="3,3"/>
+          </g>
+          <text class="matrix-text t1" x="110" y="293" font-family="Inter" font-size="9" fill="#7a6f58" text-anchor="middle">Fast Fashion</text>
+          
+          <g class="matrix-competitor c2">
+            <circle cx="200" cy="210" r="28" fill="none" stroke="#b8a887" stroke-width="1" stroke-dasharray="3,3"/>
+          </g>
+          <text class="matrix-text t2" x="200" y="213" font-family="Inter" font-size="9" fill="#7a6f58" text-anchor="middle">Mid Range</text>
+          
+          <g class="matrix-competitor c3">
+            <circle cx="310" cy="110" r="28" fill="none" stroke="#b8a887" stroke-width="1" stroke-dasharray="3,3"/>
+          </g>
+          <text class="matrix-text t3" x="310" y="113" font-family="Inter" font-size="9" fill="#7a6f58" text-anchor="middle">Select Shop</text>
+          
+          <circle class="matrix-mcsp-ring" cx="180" cy="110" r="42"/>
+          
+          <g class="matrix-mcsp">
+            <circle cx="180" cy="110" r="42" fill="#1a1612"/>
+            <text x="180" y="108" font-family="Inter" font-size="14" font-weight="900" fill="#fdf2d0" text-anchor="middle" letter-spacing="-0.5">Mc.S.P</text>
+            <text x="180" y="122" font-family="Inter" font-size="7" fill="#fdf2d0" text-anchor="middle" letter-spacing="1.5">SWEET SPOT</text>
+          </g>
+          
+          <path class="matrix-connector" d="M 310 110 Q 245 80 225 100" stroke="#1a1612" stroke-width="0.8" fill="none" stroke-dasharray="100" stroke-dashoffset="100"/>
+          <path class="matrix-arrow" d="M225 100 L230 96 M225 100 L230 105" stroke="#1a1612" stroke-width="0.8" fill="none" style="transition-delay:2.8s"/>
+          
+          <text class="matrix-text t4" x="200" y="380" font-family="Noto Sans JP" font-size="10" fill="#7a6f58" text-anchor="middle" letter-spacing="2">高品質を、手の届く価格で</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COLLECTION -->
+<section class="collection" id="collection">
+  <div class="collection-header fade-in">
+    <div class="section-label">2026SS Collection</div>
+    <h2 class="collection-title">New <em>Direction.</em></h2>
+    <p class="collection-sub">機能性とファッション性を高い次元で融合させた、Mc.S.Pの新しい提案。猛暑の時代に求められる、本当の"ベーシック"をここに。</p>
+  </div>
+  
+  <div class="collection-grid">
+    <div class="product product-1" data-stagger="0">
+      <div class="product-img">
+        <div class="product-badge">NEW</div>
+        <img src="images/product-01-tshirt.png" alt="半袖Tシャツ">
+      </div>
+      <div class="product-no">1278-6247 / MCS0001ST</div>
+      <h3 class="product-name">半袖Tシャツ</h3>
+      <p class="product-features">4WAY ストレッチポリリップ ・ オーバーサイジング</p>
+      <div class="product-price">¥5,000<span>(+TAX)</span></div>
+    </div>
+    
+    <div class="product product-2" data-stagger="1">
+      <div class="product-img">
+        <div class="product-badge">FEATURED</div>
+        <img src="images/product-02-utility-shirt.png" alt="半袖ユーティリティーシャツ">
+      </div>
+      <div class="product-no">1277-6265 / MCS0002SSH</div>
+      <h3 class="product-name">半袖ユーティリティーシャツ</h3>
+      <p class="product-features">4WAY ストレッチポリリップ ・ マルチポケット</p>
+      <div class="product-price">¥8,000<span>(+TAX)</span></div>
+    </div>
+    
+    <div class="product product-3" data-stagger="2">
+      <div class="product-img">
+        <img src="images/product-03-cargo-shorts.png" alt="ユーティリティーカーゴショーツ">
+      </div>
+      <div class="product-no">1274-6297 / MCS0002SHP</div>
+      <h3 class="product-name">ユーティリティーカーゴショーツ</h3>
+      <p class="product-features">4WAY ストレッチ ・ カーゴポケット</p>
+      <div class="product-price">¥7,000<span>(+TAX)</span></div>
+    </div>
+    
+    <div class="product product-4" data-stagger="3">
+      <div class="product-img">
+        <img src="images/product-04-open-collar.png" alt="半袖オープンカラーシャツ">
+      </div>
+      <div class="product-no">1277-6266 / MCS0001SOPSH</div>
+      <h3 class="product-name">半袖オープンカラーシャツ</h3>
+      <p class="product-features">4WAY ストレッチ DOTS ・ リラックスフィット</p>
+      <div class="product-price">¥7,000<span>(+TAX)</span></div>
+    </div>
+    
+    <div class="product product-5" data-stagger="4">
+      <div class="product-img">
+        <img src="images/product-05-relax-shorts.png" alt="リラックスショーツ">
+      </div>
+      <div class="product-no">1274-6298 / MCS0001SHP</div>
+      <h3 class="product-name">リラックスショーツ</h3>
+      <p class="product-features">4WAY ストレッチ DOTS ・ イージーウエスト</p>
+      <div class="product-price">¥6,000<span>(+TAX)</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy fade-in">
+  <div class="philosophy-bg">Mc.S.P</div>
+  <div class="philosophy-inner">
+    <p class="philosophy-text">
+      高級なものを、<em>賢く</em>選ぶ。<br>
+      <br>
+      それが、<span class="highlight">新しい Mc.S.P</span> の<br>
+      約束です。
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">Mc.S.P</div>
+        <div class="footer-tagline">The comfortable life begins in here.</div>
+        <p class="footer-info">
+          MANCHES SPECIAL PROPOSAL<br>
+          大きいサイズの老舗 MANCHES が発信する、<br>
+          機能とファッション性を両立した特別な提案。
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>Collection</h4>
+        <ul>
+          <li>2026 Spring / Summer</li>
+          <li>Size: 3L - 8L</li>
+          <li>5月中旬入荷予定</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>About</h4>
+        <ul>
+          <li>Brand Renewal</li>
+          <li>Concept</li>
+          <li>Fabric Technology</li>
+          <li>News</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li>株式会社 Manches</li>
+          <li>bigsize.com</li>
+          <li>Press / Wholesale</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 Mc.S.P / Manches Inc.</div>
+      <div>Privacy · Terms · Cookie Policy</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ===== Loader =====
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('loader').classList.add('done');
+    }, 1500);
+  });
+  
+  // ===== Intersection Observer =====
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -80px 0px' });
+  
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  
+  // ===== Staggered grid items =====
+  const staggerObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const delay = parseInt(entry.target.dataset.stagger || 0) * 120;
+        setTimeout(() => entry.target.classList.add('in-view'), delay);
+        staggerObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+  
+  document.querySelectorAll('[data-stagger]').forEach(el => staggerObserver.observe(el));
+  
+  // ===== Parallax hero bg text =====
+  const heroBg = document.querySelector('.hero-bg-text');
+  const philoBg = document.querySelector('.philosophy-bg');
+  
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const scrolled = window.scrollY;
+        if (heroBg && scrolled < window.innerHeight) {
+          heroBg.style.transform = `translateY(${scrolled * 0.3}px)`;
+        }
+        if (philoBg) {
+          const rect = philoBg.getBoundingClientRect();
+          const offset = (rect.top - window.innerHeight / 2) * -0.15;
+          philoBg.style.transform = `translate(-50%, calc(-50% + ${offset}px))`;
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+  
+  // ===== Custom cursor =====
+  const cursor = document.getElementById('cursor');
+  let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
+  
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+  
+  function animateCursor() {
+    cursorX += (mouseX - cursorX) * 0.2;
+    cursorY += (mouseY - cursorY) * 0.2;
+    if (cursor) {
+      cursor.style.left = cursorX + 'px';
+      cursor.style.top = cursorY + 'px';
+    }
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+  
+  document.querySelectorAll('a, .product, .fabric-item, .footer-col li').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+  });
+</script>
+
+</body>
+</html>
